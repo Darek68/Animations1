@@ -24,9 +24,9 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
         view.postDelayed({
             view.data = listOf(
                 0.25F,
+                0.35F,
                 0.25F,
-                0.25F,
-                0.25F,
+                0.15F,
             )
         }, 3000)
 

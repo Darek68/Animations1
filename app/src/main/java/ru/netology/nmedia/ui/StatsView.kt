@@ -16,7 +16,7 @@ import ru.netology.nmedia.util.AndroidUtils
 import kotlin.math.min
 import kotlin.random.Random
 
-class StatsView @JvmOverloads constructor(
+class   StatsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -113,54 +113,22 @@ class StatsView @JvmOverloads constructor(
         if (data.isEmpty()) {
             return
         }
-
-      /*  val rotation = 360 * progress
-        var startFrom = -90F
-        for ((index, datum) in data.withIndex()) {
-            val angle = 360F * datum
-            paint.color = colors.getOrNull(index) ?: randomColor()
-            canvas.drawArc(oval, startFrom + rotation, angle * progress, false, paint)
-            startFrom += angle
-        } */
-
-        val rotation = 360 * progress
-        var startFrom = -90F
-        for ((index, datum) in data.withIndex()) {
-            val angle = 360F * datum
-            paint.color = colors.getOrNull(index) ?: randomColor()
-            if (progress < 0.25F){
-                paint.color = colors.getOrNull(0) ?: randomColor()
-                canvas.drawArc(oval, startFrom, angle * progress * 4, false, paint)
-            } else if (progress < 0.5F) {
-                paint.color = colors.getOrNull(0) ?: randomColor()
-                canvas.drawArc(oval, startFrom, 90F, false, paint)
-                paint.color = colors.getOrNull(1) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 90F, angle * (progress - 0.25F) * 4, false, paint)
-            } else if(progress < 0.75F){
-                paint.color = colors.getOrNull(0) ?: randomColor()
-                canvas.drawArc(oval, startFrom, 90F, false, paint)
-                paint.color = colors.getOrNull(1) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 90F, 90F, false, paint)
-                paint.color = colors.getOrNull(2) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 180F, angle * (progress - 0.5F) * 4, false, paint)
-            } else {
-                paint.color = colors.getOrNull(0) ?: randomColor()
-                canvas.drawArc(oval, startFrom, 90F, false, paint)
-                paint.color = colors.getOrNull(1) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 90F, 90F, false, paint)
-                paint.color = colors.getOrNull(2) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 180F, 90F, false, paint)
-                paint.color = colors.getOrNull(3) ?: randomColor()
-                canvas.drawArc(oval, startFrom + 270F, angle * (progress - 0.75F) * 4, false, paint)
-            }
-        }
-
         canvas.drawText(
             "%.2f%%".format(data.sum() * 100),
             center.x,
             center.y + textPaint.textSize / 4,
             textPaint,
         )
+        var startFrom = -90F
+        val maxAngle = 360 * progress + startFrom
+        for ((index, datum) in data.withIndex()) {
+            var angle = 360F * datum
+            val tmpAngle = min(angle,maxAngle - startFrom)
+            paint.color = colors.getOrNull(index) ?: randomColor()
+            canvas.drawArc(oval, startFrom, tmpAngle, false, paint)
+            startFrom = startFrom + angle
+            if (startFrom > maxAngle) return
+        }
     }
 
     private fun update() {
@@ -175,7 +143,7 @@ class StatsView @JvmOverloads constructor(
                 progress = anim.animatedValue as Float
                 invalidate()
             }
-            duration = 8_500
+            duration = 6_500
             interpolator = LinearInterpolator()
             //interpolator = BounceInterpolator()
         }.also {
